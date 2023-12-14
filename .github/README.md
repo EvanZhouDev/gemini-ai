@@ -5,13 +5,13 @@
   <img alt="Gemini AI Banner" src="../assets/banner@light.svg">
 </picture>
 <p align="center">
-  <a aria-label="NPM Version" href="https://www.npmjs.com/package/palm-api">
+  <a aria-label="NPM Version" href="https://www.npmjs.com/package/gemini-ai">
     <img alt="" src="https://img.shields.io/npm/v/gemini-ai.svg?label=NPM&logo=npm&style=for-the-badge&color=0470FF&logoColor=white">
   </a>
-  <a aria-label="NPM Download Count" href="https://www.npmjs.com/package/palm-api">
+  <a aria-label="NPM Download Count" href="https://www.npmjs.com/package/gemini-ai">
     <img alt="" src="https://img.shields.io/npm/dt/gemini-ai?label=Downloads&style=for-the-badge&color=67ACF3">
   </a>
-  <a aria-label="palm-api Size" href="https://www.npmjs.com/package/palm-api">
+  <a aria-label="palm-api Size" href="https://www.npmjs.com/package/gemini-ai">
     <img alt="" src="https://img.shields.io/bundlephobia/minzip/gemini-ai?style=for-the-badge&color=F9DBBC">
   </a>
 </p>

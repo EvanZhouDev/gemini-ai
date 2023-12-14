@@ -101,7 +101,7 @@ export default class Gemini {
             data: [],
             messages: []
         })
-        console.log(config.messages.flatMap(answerPairToParameter))
+
         const body = {
             contents: [
                 ...config.messages.flatMap(answerPairToParameter),
@@ -255,7 +255,6 @@ export default class Gemini {
                 }
 
                 this.messages.push(response.candidates[0].content)
-                console.log(this.messages);
 
                 switch (config.format) {
                     case Gemini.TEXT:

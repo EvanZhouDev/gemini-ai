@@ -31,7 +31,21 @@ Gemini AI v1.0 compared to Google's [own API](https://www.npmjs.com/package/@goo
 
 - ⚡ [**Native REST API**](#inititalization): Have simplicity without compromises
 - 🚀 [**Easy**](#feature-highlight-auto-model-selection): Auto model selection based on context
-- 🎯 [**Concise**](#NEEDED): _**4x**_ less code needed
+- 🎯 [**Concise**](#why-gemini-ai): _**4x**_ less code needed
+
+
+## Table of Contents
+
+* [**Getting an API Key**](#getting-an-api-key)
+* [**Quickstart**](#quickstart)
+* [**Documentation**](#documentation)
+	* [Initialization](#inititalization)
+	* [Method Patterns](#method-patterns)
+	* [`Gemini.ask()` Method](#geminiask)
+	* [`Gemini.count()` Method](#geminicount)
+	* [`Gemini.embed()` Method](#geminiembed)
+	* [`Gemini.createChat()` Method](#geminicreatechat)
+* [**FAQ**](#faq)
 
 ## Getting an API Key
 

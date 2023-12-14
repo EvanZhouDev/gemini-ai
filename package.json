@@ -8,8 +8,5 @@
   },
   "author": "",
   "license": "ISC",
-  "type": "module",
-  "dependencies": {
-    "file-type": "^18.7.0"
-  }
+  "type": "module"
 }

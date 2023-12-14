@@ -21,19 +21,19 @@
 
 ## Features
 
-- 🌎 [**Multimodal**](#documentation): Interact with text, images, and more.
-- 🌐 [**Contextual Conversations**](#palmcreatechat): Chat with Gemini, built in.
-- 🧪 [**Parameter**](#config-1): Easily modify `temperature`, `topP`, and more
+- 🌎 [**Multimodal**](#feature-highlight-auto-model-selection): Interact with text, images, and more.
+- 🌐 [**Contextual Conversations**](#geminicreatechat): Chat with Gemini, built in.
+- 🧪 [**Parameter**](#method-patterns): Easily modify `temperature`, `topP`, and more
 
-### Highlights
+## Highlights
 
 Gemini AI v1.0 compared to Google's [own API](https://www.npmjs.com/package/@google/generative-ai)
 
-- ⚡ [**Native REST API**](#NEEDED): Have simplicity without compromises
-- 🚀 [**Easy**](#NEEDED): Auto model selection based on context
+- ⚡ [**Native REST API**](#inititalization): Have simplicity without compromises
+- 🚀 [**Easy**](#feature-highlight-auto-model-selection): Auto model selection based on context
 - 🎯 [**Concise**](#NEEDED): _**4x**_ less code needed
 
-### Getting an API Key
+## Getting an API Key
 
 1. Go to [Google Makersuite](https://makersuite.google.com)
 2. Click "Get API key" at the top, and follow the steps to get your key
@@ -42,7 +42,7 @@ Gemini AI v1.0 compared to Google's [own API](https://www.npmjs.com/package/@goo
 > [!CAUTION]
 > Do not share this key with other people! It is recommended to store it in a `.env` file.
 
-### Quickstart
+## Quickstart
 
 Make a text request (`gemini-pro`):
 
@@ -66,7 +66,7 @@ console.log(await chat.ask("Hi!"));
 console.log(await chat.ask("What's the last thing I said?"));
 ```
 
-#### Other useful features
+### Other useful features
 
 <details>
 <summary>Make a text request with images (<code>gemini-pro-vision</code>):</summary>
@@ -121,11 +121,18 @@ gemini.embed("Hi!");
 
 </details>
 
-### Documentation
+#### Feature Highlight: Auto Model Selection
 
-#### Inititalization
+Google has released two models this time for Gemini—`gemini-pro`, and `gemini-pro-vision`. The former is text-specific, while the latter is for multimodal use. Gemini AI has been designed so that you do not have to worry about which model you are using—If you pass in images, it will directly
+
+## Documentation
+
+### Inititalization
 
 To start any project, include the following lines:
+
+> [!NOTE]  
+> Under the hood, we are just running the Gemini REST API, so there's no fancy authentication going on! Just pure, simple web requests.
 
 ```javascript
 // Import Gemini AI
@@ -135,12 +142,14 @@ import Gemini from "gemini-ai";
 const gemini = new Gemini(API_KEY);
 ```
 
-#### Method Patterns
+Learn how to add a `fetch` polyfill for the browser [here](#im-in-a-browser-environment-what-do-i-do).
+
+### Method Patterns
 
 All model calling methods have a main parameter first (typically the text as input), and a `config` second, as a JSON. A detailed list of all config can be found along with the method. An example call of a function may look like this:
 
 ```javascript
-gemini.ask("Hi!", {
+await gemini.ask("Hi!", {
 	// Config
 	temperature: 0.5,
 	topP: 1,
@@ -153,7 +162,7 @@ gemini.ask("Hi!", {
 
 Note that the output to `Gemini.JSON` varies depending on the model and command, and is not documented here in detail due to the fact that it is unnecessary to use in most scenarios. You can find more information about the REST API's raw output [here](https://ai.google.dev/tutorials/rest_quickstart).
 
-#### `Gemini.ask()`
+### `Gemini.ask()`
 
 This method uses the `generateContent` command to get Gemini's response to your input.
 
@@ -178,7 +187,7 @@ import Gemini from "gemini-ai";
 const gemini = new Gemini(API_KEY);
 
 console.log(
-	gemini.ask("Hello!", {
+	await gemini.ask("Hello!", {
 		temperature: 0.5,
 		topP: 1,
 		topK: 10,
@@ -186,7 +195,7 @@ console.log(
 );
 ```
 
-#### `Gemini.count()`
+### `Gemini.count()`
 
 This method uses the `countTokens` command to figure out the number of tokens _in your input_.
 
@@ -202,10 +211,10 @@ import Gemini from "gemini-ai";
 
 const gemini = new Gemini(API_KEY);
 
-console.log(gemini.count("Hello!"));
+console.log(await gemini.count("Hello!"));
 ```
 
-#### `Gemini.embed()`
+### `Gemini.embed()`
 
 This method uses the `embedContent` command (currently **only on `embedding-001`**) to generate an embedding matrix for your input.
 
@@ -221,5 +230,114 @@ import Gemini from "gemini-ai";
 
 const gemini = new Gemini(API_KEY);
 
-console.log(gemini.embed("Hello!"));
+console.log(await gemini.embed("Hello!"));
+```
+
+### `Gemini.createChat()`
+
+`Gemini.createChat()` is a unique method. For one, it isn't asynchronously called. Additionally, it returns a brand new `Chat` object. The `Chat` object only has one method, which is `Chat.ask()`, which has the _exact same syntax_ as the `Gemini.ask()` method, documented [above](#geminiask). The only small difference is that most parameters are passed into the `Chat` through `createChat()`, and cannot be overriden by the `ask()` method. The only parameters that can be overriden is `format` and `data` (**Which is as of 12/13/2023 not supported yet**).
+
+> [!IMPORTANT]  
+> Google has not yet allowed the use of the `gemini-pro-vision` model in continued chats yet—The feature is already implemented, to a certain degree, but cannot be used due to Google's API limitations.
+
+All important data in the `Chat` object is stored in the `Chat.messages` variable, and can be used to create a new `Chat` that "continues" the conversation, as will be demoed in the example usage section.
+
+Config available for `createChat`:
+| Field Name | Description | Default Value |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
+| `topP` | See [Google's parameter explanations](https://cloud.google.com/vertex-ai/docs/generative-ai/start/quickstarts/api-quickstart#parameter_definitions) | `0.8` |
+| `topK` | See [Google's parameter explanations](https://cloud.google.com/vertex-ai/docs/generative-ai/start/quickstarts/api-quickstart#parameter_definitions) | `10` |
+| `temperature` | See [Google's parameter explanations](https://cloud.google.com/vertex-ai/docs/generative-ai/start/quickstarts/api-quickstart#parameter_definitions) | `1` |
+| `model` | Which model to use. Can be any model Google has available, but certain features are not available on some models. Currently: `gemini-pro` and `gemini-pro-vision` | Automatic based on Context |
+| `maxOutputTokens` | Max tokens to output | `800` |
+| `messages` | Array of `[userInput, modelOutput]` pairs to show how the bot is supposed to behave | `[]` |
+
+Example Usage:
+
+```javascript
+// Simple example:
+
+import Gemini from "gemini-ai";
+
+const gemini = new Gemini(API_KEY);
+
+const chat = gemini.createChat();
+
+console.log(await chat.ask("Hi!"));
+console.log(await chat.ask("What's the last thing I said?"));
+```
+
+```javascript
+// "Continuing" a conversation:
+
+import Gemini from "gemini-ai";
+
+const gemini = new Gemini(API_KEY);
+
+const chat = gemini.createChat();
+
+console.log(await chat.ask("Hi!"));
+
+const newChat = gemini.createChat({
+	messages: chat.messages,
+});
+
+console.log(await newChat.ask("What's the last thing I said?"));
+```
+
+## FAQ
+
+### Why Gemini AI?
+
+Well, simply put, it makes using Gemini just that much easier... see the code necessary to make a request using Google's own API, compared to Gemini AI:
+
+<details>
+<summary>See the comparison</summary>
+<br>
+
+Google's own API (CommonJS):
+
+```javascript
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+
+const genAI = new GoogleGenerativeAI(API_KEY);
+
+async function run() {
+	const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+
+	const prompt = "Hi!";
+
+	const result = await model.generateContent(prompt);
+	const response = await result.response;
+	const text = response.text();
+	console.log(text);
+}
+
+run();
+```
+
+Gemini AI (ES6 Modules):
+
+```javascript
+import Gemini from "gemini-ai";
+
+const gemini = new Gemini(API_KEY);
+console.log(await gemini.ask("Hi!"));
+```
+
+That's nearly 4 times less code!
+
+</details>
+
+### I'm in a browser environment! What do I do?
+
+Everything is optimized so it works for both browsers and Node.js—Files are passed as Buffers, so you decide how to get them, and adding a fetch polyfill is as easy as:
+
+```javascript
+import Gemini from "gemini-ai";
+import fetch from "node-fetch";
+
+const gemini = new Gemini(API_KEY, {
+	fetch: fetch,
+});
 ```

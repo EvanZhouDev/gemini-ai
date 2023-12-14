@@ -1,6 +1,6 @@
 {
   "name": "gemini-ai",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "The easiest way to access Google's Gemini model",
   "main": "index.js",
   "scripts": {

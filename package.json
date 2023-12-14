@@ -1,12 +1,15 @@
 {
-  "name": "gemini-ai",
-  "version": "1.0.0",
-  "description": "The easiest way to access Google's Gemini model",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
-  "type": "module"
+	"name": "gemini-ai",
+	"version": "1.0.0",
+	"author": "",
+	"main": "index.js",
+	"description": "The easiest way to access Google's Gemini model",
+	"license": "ISC",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"type": "module",
+	"devDependencies": {
+		"test": "jest"
+	}
 }

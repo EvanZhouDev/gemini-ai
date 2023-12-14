@@ -1,6 +1,49 @@
-import { fileTypeFromBuffer } from 'file-type';
+let fileTypeFromBuffer = (arrayBuffer) => {
+    const uint8arr = new Uint8Array(arrayBuffer)
 
-export class Gemini {
+    const len = 4
+    if (uint8arr.length >= len) {
+        let signatureArr = new Array(len)
+        for (let i = 0; i < len; i++)
+            signatureArr[i] = (new Uint8Array(arrayBuffer))[i].toString(16)
+        const signature = signatureArr.join('').toUpperCase()
+
+        switch (signature) {
+            case '89504E47':
+                return 'image/png'
+            case '47494638':
+                return 'image/gif'
+            case 'FFD8FFDB':
+            case 'FFD8FFE0':
+                return 'image/jpeg'
+            default:
+                throw new Error("Unknown file type. Please provide a .png, .gif, or .jpeg/.jpg file.")
+        }
+    }
+    throw new Error("Unknown file type. Please provide a .png, .gif, or .jpeg/.jpg file.")
+}
+
+let answerPairToParameter = (message) => {
+    if (message.length !== 2) {
+        throw new Error("Message format must be an array of [user, model] pairs. See docs for more information.")
+    }
+    return [
+        {
+            parts: [
+                { text: message[0] }
+            ],
+            role: "user"
+        },
+        {
+            parts: [
+                { text: message[1] }
+            ],
+            role: "model"
+        }
+    ]
+}
+
+export default class Gemini {
     #fetch;
 
     static JSON = "json";
@@ -55,16 +98,20 @@ export class Gemini {
             format: Gemini.TEXT,
             maxOutputTokens: 800,
             model: undefined,
-            data: undefined,
+            data: [],
+            messages: []
         })
-
+        console.log(config.messages.flatMap(answerPairToParameter))
         const body = {
-            contents: [{
-                parts: [
-                    { text: message }
-                ],
-                role: "user"
-            }],
+            contents: [
+                ...config.messages.flatMap(answerPairToParameter),
+                {
+                    parts: [
+                        { text: message }
+                    ],
+                    role: "user"
+                },
+            ],
             generationConfig: {
                 temperature: config.temperature,
                 maxOutputTokens: config.maxOutputTokens,
@@ -73,16 +120,22 @@ export class Gemini {
             }
         }
 
-        if (config.data) {
-            body.contents.at(-1).parts.push({
-                inline_data: {
-                    mime_type: (await fileTypeFromBuffer(config.data)).mime,
-                    data: config.data.toString("base64")
-                }
-            })
+        if (config.data.length) {
+            for (let data of config.data) {
+                body.contents.at(-1).parts.push({
+                    inline_data: {
+                        mime_type: (fileTypeFromBuffer(data)).mime,
+                        data: data.toString("base64")
+                    }
+                })
+            }
         }
 
         const response = await this.#query(config.model || (config.data ? "gemini-pro-vision" : "gemini-pro"), "generateContent", body)
+
+        if (response.promptFeedback.blockReason) {
+            throw new Error("Your prompt was blocked by Google. Here is Gemini's feedback: \n" + JSON.stringify(response.promptFeedback, null, 4));
+        }
 
         switch (config.format) {
             case Gemini.TEXT:
@@ -145,8 +198,9 @@ export class Gemini {
                     model: "gemini-pro",
                     maxOutputTokens: 800,
                 })
-                this.messages = this.config.messages
+                this.messages = this.config.messages.flatMap(answerPairToParameter);
             }
+
 
             async ask(message, rawConfig) {
                 let config = {
@@ -157,6 +211,10 @@ export class Gemini {
                     })
                 }
 
+                if (this.messages.at(-1).role === "user") {
+                    throw new Error("Please ensure you are running chat commands asynchronously. You cannot send 2 messages at the same time in the same chat. Use standard Gemini.ask() for this.")
+                }
+
                 let currentMessage = {
                     parts: [
                         { text: message }
@@ -164,15 +222,17 @@ export class Gemini {
                     role: "user"
                 }
 
-                if (config.data) {
+                if (config.data.length) {
                     console.error("It is currently not supported by Google to use non-text data with the chat function. If this feature has been added, please submit an Issue.");
                     // this.config.model = "gemini-pro-vision";
-                    // currentMessage.parts.push({
-                    //     inline_data: {
-                    //         mime_type: (await fileTypeFromBuffer(config.data)).mime,
-                    //         data: config.data.toString("base64")
-                    //     }
-                    // })
+                    // for (let data of config.data) {
+                    //     currentMessage.parts.push({
+                    //         inline_data: {
+                    //             mime_type: (fileTypeFromBuffer(data)).mime,
+                    //             data: data.toString("base64")
+                    //         }
+                    //     })
+                    // }
                 }
 
                 this.messages.push(currentMessage)
@@ -188,6 +248,11 @@ export class Gemini {
                 }
 
                 let response = await this.gemini.#query(config.model || (config.data ? "gemini-pro-vision" : "gemini-pro"), "generateContent", body)
+
+                if (response.promptFeedback.blockReason) {
+                    this.messages.pop();
+                    throw new Error("Your prompt was blocked by Google. Here is Gemini's feedback: \n" + JSON.stringify(response.promptFeedback, null, 4));
+                }
 
                 this.messages.push(response.candidates[0].content)
                 console.log(this.messages);

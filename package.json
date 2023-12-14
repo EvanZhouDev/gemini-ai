@@ -1,15 +1,18 @@
 {
-	"name": "gemini-ai",
-	"version": "1.0.0",
-	"author": "",
-	"main": "index.js",
-	"description": "The easiest way to access Google's Gemini model",
-	"license": "ISC",
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
-	},
-	"type": "module",
-	"devDependencies": {
-		"test": "jest"
-	}
+  "name": "gemini-ai",
+  "version": "1.0.1",
+  "author": "",
+  "main": "index.js",
+  "description": "The easiest way to access Google's Gemini model",
+  "license": "ISC",
+  "scripts": {
+    "test": "vitest",
+    "coverage": "vitest --coverage"
+  },
+  "type": "module",
+  "devDependencies": {
+    "@vitest/coverage-v8": "^1.0.4",
+    "node-fetch": "^3.3.2",
+    "vitest": "^1.0.4"
+  }
 }

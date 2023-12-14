@@ -1,3 +1,4 @@
+import fs from "fs";
 let fileTypeFromBuffer = (arrayBuffer) => {
     const uint8arr = new Uint8Array(arrayBuffer)
 
@@ -7,7 +8,6 @@ let fileTypeFromBuffer = (arrayBuffer) => {
         for (let i = 0; i < len; i++)
             signatureArr[i] = (new Uint8Array(arrayBuffer))[i].toString(16)
         const signature = signatureArr.join('').toUpperCase()
-
         switch (signature) {
             case '89504E47':
                 return 'image/png'
@@ -173,12 +173,12 @@ export default class Gemini {
 
         let body = {
             model: `models/${config.model}`,
-            contents: [{
+            content: {
                 parts: [
                     { text: message }
                 ],
                 role: "user"
-            }],
+            },
         }
 
         let response = await this.#query(config.model, "embedContent", body)
@@ -207,11 +207,11 @@ export default class Gemini {
                     ...this.config,
                     ...this.gemini.#parseConfig(rawConfig, {
                         format: Gemini.TEXT,
-                        data: undefined,
+                        data: [],
                     })
                 }
 
-                if (this.messages.at(-1).role === "user") {
+                if (this.messages.at(-1)?.role === "user") {
                     throw new Error("Please ensure you are running chat commands asynchronously. You cannot send 2 messages at the same time in the same chat. Use standard Gemini.ask() for this.")
                 }
 

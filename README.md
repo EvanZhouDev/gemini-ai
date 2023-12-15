@@ -1,6 +1,19 @@
-# Gemini AI
-
-The easiest way to use Google's new powerful and versatile Gemini model.
+<h1 align="center">PaLM API</h1>
+<p align="center">Welcome to the Gemini era.</p>
+<p align="center">
+  <a aria-label="NPM Version" href="https://www.npmjs.com/package/gemini-ai">
+    <img alt="" src="https://img.shields.io/npm/v/gemini-ai.svg?label=NPM&logo=npm&style=for-the-badge&color=0470FF&logoColor=white">
+  </a>
+  <a aria-label="NPM Download Count" href="https://www.npmjs.com/package/gemini-ai">
+    <img alt="" src="https://img.shields.io/npm/dt/gemini-ai?label=Downloads&style=for-the-badge&color=67ACF3">
+  </a>
+  <a aria-label="palm-api Size" href="https://www.npmjs.com/package/gemini-ai">
+    <img alt="" src="https://img.shields.io/bundlephobia/minzip/gemini-ai?style=for-the-badge&color=F9DBBC">
+  </a>
+</p>
+<p align="center">
+  <a href="https://github.com/EvanZhouDev/gemini-ai?tab=readme-ov-file#documentation">Docs</a> | <a href="https://github.com/evanzhoudev/gemini-ai">GitHub</a> | <a href="https://github.com/EvanZhouDev/gemini-ai?tab=readme-ov-file#faq">FAQ</a>
+</p>
 
 ## Quickstart
 
@@ -40,3 +53,4 @@ Read the full docs at https://github.com/EvanZhouDev/gemini-ai.
   - [`Gemini.embed()` Method](https://github.com/EvanZhouDev/gemini-ai?tab=readme-ov-file#geminiembed)
   - [`Gemini.createChat()` Method](https://github.com/EvanZhouDev/gemini-ai?tab=readme-ov-file#geminicreatechat)
 - [**FAQ**](https://github.com/EvanZhouDev/gemini-ai?tab=readme-ov-file#faq)
+- [**Contributors**](https://github.com/EvanZhouDev/gemini-ai?tab=readme-ov-file#contributors)

@@ -16,7 +16,7 @@
   </a>
 </p>
 <p align="center">
-  <a href="#documentation">Docs</a> | <a href="https://github.com/evanzhoudev/palm-api">GitHub</a> | <a href="#frequently-asked-questions">FAQ</a>
+  <a href="#documentation">Docs</a> | <a href="https://github.com/evanzhoudev/gemini-ai">GitHub</a> | <a href="#faq">FAQ</a>
 </p>
 
 ## Features
@@ -46,6 +46,7 @@ Gemini AI v1.0 compared to Google's [own API](https://www.npmjs.com/package/@goo
 	* [`Gemini.embed()` Method](#geminiembed)
 	* [`Gemini.createChat()` Method](#geminicreatechat)
 * [**FAQ**](#faq)
+* [**Contributors**](#contributors)
 
 ## Getting an API Key
 
@@ -355,3 +356,6 @@ const gemini = new Gemini(API_KEY, {
 	fetch: fetch,
 });
 ```
+
+<h2 align="center" id="contributors">Contributors</h2>
+<p align="center">A special shoutout to developers of and contributors to the <a href="https://github.com/EvanZhouDev/bard-ai"><code>bard-ai</code></a> and <a href="https://github.com/EvanZhouDev/palm-api"><code>palm-api</code></a> libraries. Gemini AI's interface is heavily based on what we have developed on these two projects.</p>

@@ -1,4 +1,3 @@
-import fs from "fs";
 let fileTypeFromBuffer = (arrayBuffer) => {
     const uint8arr = new Uint8Array(arrayBuffer)
 
@@ -131,7 +130,7 @@ export default class Gemini {
             }
         }
 
-        const response = await this.#query(config.model || (config.data ? "gemini-pro-vision" : "gemini-pro"), "generateContent", body)
+        const response = await this.#query(config.model || (config.data.length ? "gemini-pro-vision" : "gemini-pro"), "generateContent", body)
 
         if (response.promptFeedback.blockReason) {
             throw new Error("Your prompt was blocked by Google. Here is Gemini's feedback: \n" + JSON.stringify(response.promptFeedback, null, 4));
@@ -247,7 +246,7 @@ export default class Gemini {
                     }
                 }
 
-                let response = await this.gemini.#query(config.model || (config.data ? "gemini-pro-vision" : "gemini-pro"), "generateContent", body)
+                let response = await this.gemini.#query(config.model || (config.data.length ? "gemini-pro-vision" : "gemini-pro"), "generateContent", body)
 
                 if (response.promptFeedback.blockReason) {
                     this.messages.pop();

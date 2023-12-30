@@ -30,7 +30,7 @@ console.log(await gemini.ask("Hi!"));
 Chat with Gemini (`gemini-pro`):
 
 ```javascript
-import fs from "fs";
+import Gemini from "gemini-ai";
 
 const gemini = new Gemini(API_KEY);
 const chat = gemini.createChat();

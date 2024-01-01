@@ -22,7 +22,6 @@
 > [!NOTE]  
 > With the release of Gemini AI 1.1, there is now **streaming support**! Check it out [here](#streaming).
 
-
 ## Features
 
 - 🌎 [**Multimodal**](#auto-model-selection): Interact with text and images—Native to the model.
@@ -179,6 +178,31 @@ Note that this automatically cuts to the `streamContentGenerate` command... you 
 
 > [!NOTE]  
 > Realize that you don't need to call `ask` async if you're handling stream management on your own. If you want to tap the final answer, it still is returned by the method, and you call it async as normal.
+
+### Proxy Support
+
+Use a proxy when fetching from Gemini. To keep package size down and adhere to the [SRP](https://en.wikipedia.org/wiki/Single_responsibility_principle), the actual proxy handling is delegated to the [undici library](https://undici.nodejs.org/#/).
+
+Here's how to add a proxy:
+
+Install `undici`:
+
+```bash
+npm i undici
+```
+
+Initialize it with Gemini AI:
+
+```javascript
+import { ProxyAgent } from 'undici'
+import Gemini from 'gemini-ai'
+
+let gemini = new Gemini(API_KEY, {
+	dispatcher: new ProxyAgent(PROXY_URL)
+})
+```
+
+And use as normal!
 
 ## Documentation
 

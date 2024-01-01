@@ -285,16 +285,19 @@ export default class Gemini {
                 }
 
                 if (config.data.length) {
-                    console.error("It is currently not supported by Google to use non-text data with the chat function. If this feature has been added, please submit an Issue.");
-                    // this.config.model = "gemini-pro-vision";
-                    // for (let data of config.data) {
-                    //     currentMessage.parts.push({
-                    //         inline_data: {
-                    //             mime_type: (fileTypeFromBuffer(data)).mime,
-                    //             data: data.toString("base64")
-                    //         }
-                    //     })
-                    // }
+                    try {
+                        this.config.model = "gemini-pro-vision";
+                        for (let data of config.data) {
+                            currentMessage.parts.push({
+                                inline_data: {
+                                    mime_type: (fileTypeFromBuffer(data)).mime,
+                                    data: data.toString("base64")
+                                }
+                            })
+                        }
+                    } catch {
+                        console.error("It is currently not supported by Google to use non-text data with the chat function.");
+                    }
                 }
 
                 this.messages.push(currentMessage)

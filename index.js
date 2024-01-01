@@ -123,7 +123,7 @@ export default class Gemini {
             for (let data of config.data) {
                 body.contents.at(-1).parts.push({
                     inline_data: {
-                        mime_type: (fileTypeFromBuffer(data)).mime,
+                        mime_type: fileTypeFromBuffer(data),
                         data: data.toString("base64")
                     }
                 })

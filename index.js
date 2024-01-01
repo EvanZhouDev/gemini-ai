@@ -44,6 +44,7 @@ let answerPairToParameter = (message) => {
 
 export default class Gemini {
     #fetch;
+    #dispatcher;
 
     static JSON = "json";
     static TEXT = "markdown"
@@ -57,12 +58,14 @@ export default class Gemini {
 
         let config = this.#parseConfig(rawConfig, {
             fetch: defaultFetch,
+            dispatcher: undefined
         })
 
         if (!config.fetch) throw new Error("Fetch was not found in environment, and no polyfill was provided. Please install a polyfill, and put it in the `fetch` property of the Gemini configuration.")
 
         this.#fetch = config.fetch;
         this.key = key;
+        this.#dispatcher = config.dispatcher
     }
 
     #parseConfig(raw = {}, defaults = {}) {
@@ -77,7 +80,8 @@ export default class Gemini {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(body)
+            body: JSON.stringify(body),
+            dispatcher: this.#dispatcher
         }
 
 

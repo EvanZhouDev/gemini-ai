@@ -1,6 +1,6 @@
 {
 	"name": "gemini-ai",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"author": "EvanZhouDev",
 	"main": "index.js",
 	"description": "The easiest way to use the powerful Google Gemini model.",

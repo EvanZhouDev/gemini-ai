@@ -320,7 +320,7 @@ export default class Gemini {
                     await this.gemini.#queryStream(config.model || (config.data.length ? "gemini-pro-vision" : "gemini-pro"), "streamGenerateContent", body, (streamContent) => {
                         finalJSON = streamContent;
 
-                        if (streamContent.promptFeedback.blockReason) {
+                        if (streamContent.promptFeedback?.blockReason) {
                             this.messages.pop();
                             throw new Error("Your prompt was blocked by Google. Here is Gemini's feedback: \n" + JSON.stringify(response.promptFeedback, null, 4));
                         }
@@ -332,9 +332,9 @@ export default class Gemini {
 
                     return this.gemini.#switchFormat(config.format, finalJSON)
                 } else {
-                    let response = await this.gemini.#query(config.model || (config.data.length ? "gemini-pro-vision" : "gemini-pro"), "generateContent", body)
+                    let response = await this.gemini.#queryJSON(config.model || (config.data.length ? "gemini-pro-vision" : "gemini-pro"), "generateContent", body)
 
-                    if (response.promptFeedback.blockReason) {
+                    if (response.promptFeedback?.blockReason) {
                         this.messages.pop();
                         throw new Error("Your prompt was blocked by Google. Here is Gemini's feedback: \n" + JSON.stringify(response.promptFeedback, null, 4));
                     }

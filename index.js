@@ -184,10 +184,11 @@ export default class Gemini {
         }
 
         if (config.stream) {
-            let finalJSON = {}
+            let finalJSON = undefined
 
             await this.#queryStream(config.model || (config.data.length ? "gemini-pro-vision" : "gemini-pro"), "streamGenerateContent", body, (streamContent) => {
-                finalJSON = streamContent;
+                if (!finalJSON) finalJSON = streamContent;
+                else finalJSON.candidates[0].content.parts[0].text += streamContent.candidates[0].content.parts[0].text
 
                 if (streamContent.promptFeedback.blockReason) {
                     throw new Error("Your prompt was blocked by Google. Here is Gemini's feedback: \n" + JSON.stringify(response.promptFeedback, null, 4));

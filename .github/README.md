@@ -190,7 +190,6 @@ Config available:
 | `temperature` | See [Google's parameter explanations](https://cloud.google.com/vertex-ai/docs/generative-ai/start/quickstarts/api-quickstart#parameter_definitions) | `1` |
 | `model` | Which model to use. Can be any model Google has available, but certain features are not available on some models. Currently: `gemini-pro` and `gemini-pro-vision` | Automatic based on Context |
 | `maxOutputTokens` | Max tokens to output | `800` |
-| `data` | Max tokens to output | `800` |
 | `messages` | Array of `[userInput, modelOutput]` pairs to show how the bot is supposed to behave | `[]` |
 | `data` | An array of `Buffer`s to input to the model. Automatically toggles model to `gemini-pro-vision` | `[]` |
 

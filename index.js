@@ -74,6 +74,17 @@ export default class Gemini {
         return { ...defaults, ...raw };
     }
 
+    #switchFormat(format, response) {
+        switch (format) {
+            case Gemini.TEXT:
+                return response.candidates[0].content.parts[0].text;
+            case Gemini.JSON:
+                return response
+            default:
+                throw new Error(`${config.format} is not a valid format. Use Gemini.TEXT or Gemini.JSON.`)
+        }
+    }
+
     async #query(model, command, body) {
         const opts = {
             method: "POST",
@@ -87,10 +98,47 @@ export default class Gemini {
 
         const response = await this.#fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:${command}?key=${this.key}`, opts);
 
+        if (!response.ok) {
+            throw new Error(`There was an HTTP error when fetching Gemini. HTTP status: ${response.status}`);
+        }
+
+        return response
+    }
+
+    async #queryJSON(model, command, body) {
+        const response = await this.#query(model, command, body)
+
         let json = await response.json()
         if (!response.ok) throw new Error("An error occurred when fetching Gemini: \n" + json.error.message);
 
         return json
+    }
+
+    async #queryStream(model, command, body, callback) {
+        const response = await this.#query(model, command, body)
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder('utf-8');
+
+
+        let jsonString = '';
+        let json;
+
+        await reader.read().then(function processText({ done, value }) {
+            if (done) {
+                return;
+            }
+
+            jsonString += decoder.decode(value, { stream: true });
+
+            try {
+                let parsedJSON = JSON.parse(jsonString + "]")
+                json = { ...json, ...parsedJSON[parsedJSON.length - 1] }
+                callback(json)
+            } catch { }
+
+            return reader.read().then(processText);
+        });
     }
 
     async ask(message, rawConfig = {}) {
@@ -102,7 +150,8 @@ export default class Gemini {
             maxOutputTokens: 800,
             model: undefined,
             data: [],
-            messages: []
+            messages: [],
+            stream: undefined
         })
 
         const body = {
@@ -134,19 +183,28 @@ export default class Gemini {
             }
         }
 
-        const response = await this.#query(config.model || (config.data.length ? "gemini-pro-vision" : "gemini-pro"), "generateContent", body)
+        if (config.stream) {
+            let finalJSON = {}
 
-        if (response.promptFeedback.blockReason) {
-            throw new Error("Your prompt was blocked by Google. Here is Gemini's feedback: \n" + JSON.stringify(response.promptFeedback, null, 4));
-        }
+            await this.#queryStream(config.model || (config.data.length ? "gemini-pro-vision" : "gemini-pro"), "streamGenerateContent", body, (streamContent) => {
+                finalJSON = streamContent;
 
-        switch (config.format) {
-            case Gemini.TEXT:
-                return response.candidates[0].content.parts[0].text
-            case Gemini.JSON:
-                return response;
-            default:
-                throw new Error(`${config.format} is not a valid format. Use Gemini.TEXT or Gemini.JSON.`)
+                if (streamContent.promptFeedback.blockReason) {
+                    throw new Error("Your prompt was blocked by Google. Here is Gemini's feedback: \n" + JSON.stringify(response.promptFeedback, null, 4));
+                }
+
+                config.stream(this.#switchFormat(config.format, streamContent));
+            })
+
+            return this.#switchFormat(config.format, finalJSON)
+        } else {
+            const response = await this.#queryJSON(config.model || (config.data.length ? "gemini-pro-vision" : "gemini-pro"), "generateContent", body)
+
+            if (response.promptFeedback.blockReason) {
+                throw new Error("Your prompt was blocked by Google. Here is Gemini's feedback: \n" + JSON.stringify(response.promptFeedback, null, 4));
+            }
+
+            return this.#switchFormat(config.format, response)
         }
     }
 
@@ -164,7 +222,7 @@ export default class Gemini {
             }],
         }
 
-        let response = await this.#query(config.model, "countTokens", body)
+        let response = await this.#queryJSON(config.model, "countTokens", body)
 
         return response.totalTokens;
     }
@@ -184,7 +242,7 @@ export default class Gemini {
             },
         }
 
-        let response = await this.#query(config.model, "embedContent", body)
+        let response = await this.#queryJSON(config.model, "embedContent", body)
 
         return response.embedding.values;
     }
@@ -211,6 +269,7 @@ export default class Gemini {
                     ...this.gemini.#parseConfig(rawConfig, {
                         format: Gemini.TEXT,
                         data: [],
+                        stream: undefined
                     })
                 }
 
@@ -250,22 +309,35 @@ export default class Gemini {
                     }
                 }
 
-                let response = await this.gemini.#query(config.model || (config.data.length ? "gemini-pro-vision" : "gemini-pro"), "generateContent", body)
 
-                if (response.promptFeedback.blockReason) {
-                    this.messages.pop();
-                    throw new Error("Your prompt was blocked by Google. Here is Gemini's feedback: \n" + JSON.stringify(response.promptFeedback, null, 4));
-                }
+                if (config.stream) {
+                    let finalJSON = {}
 
-                this.messages.push(response.candidates[0].content)
+                    await this.gemini.#queryStream(config.model || (config.data.length ? "gemini-pro-vision" : "gemini-pro"), "streamGenerateContent", body, (streamContent) => {
+                        finalJSON = streamContent;
 
-                switch (config.format) {
-                    case Gemini.TEXT:
-                        return response.candidates[0].content.parts[0].text
-                    case Gemini.JSON:
-                        return response;
-                    default:
-                        throw new Error(`${config.format} is not a valid format. Use Gemini.TEXT or Gemini.JSON.`)
+                        if (streamContent.promptFeedback.blockReason) {
+                            this.messages.pop();
+                            throw new Error("Your prompt was blocked by Google. Here is Gemini's feedback: \n" + JSON.stringify(response.promptFeedback, null, 4));
+                        }
+
+                        config.stream(this.gemini.#switchFormat(config.format, streamContent));
+                    })
+
+                    this.messages.push(finalJSON.candidates[0].content)
+
+                    return this.gemini.#switchFormat(config.format, finalJSON)
+                } else {
+                    let response = await this.gemini.#query(config.model || (config.data.length ? "gemini-pro-vision" : "gemini-pro"), "generateContent", body)
+
+                    if (response.promptFeedback.blockReason) {
+                        this.messages.pop();
+                        throw new Error("Your prompt was blocked by Google. Here is Gemini's feedback: \n" + JSON.stringify(response.promptFeedback, null, 4));
+                    }
+
+                    this.messages.push(response.candidates[0].content)
+
+                    return this.gemini.#switchFormat(config.format, response)
                 }
             }
         }

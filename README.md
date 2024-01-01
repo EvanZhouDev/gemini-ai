@@ -1,4 +1,4 @@
-<h1 align="center">PaLM API</h1>
+<h1 align="center">Gemini AI</h1>
 <p align="center">Welcome to the Gemini era.</p>
 <p align="center">
   <a aria-label="NPM Version" href="https://www.npmjs.com/package/gemini-ai">
@@ -27,6 +27,18 @@ const gemini = new Gemini(API_KEY);
 console.log(await gemini.ask("Hi!"));
 ```
 
+Make a streaming text request (`gemini-pro`):
+
+```javascript
+import Gemini from "gemini-ai";
+
+const gemini = new Gemini(API_KEY);
+
+gemini.ask("Hi!", {
+	stream: console.log,
+});
+```
+
 Chat with Gemini (`gemini-pro`):
 
 ```javascript
@@ -45,6 +57,7 @@ Read the full docs at https://github.com/EvanZhouDev/gemini-ai.
 
 - [**Getting an API Key**](https://github.com/EvanZhouDev/gemini-ai?tab=readme-ov-file#getting-an-api-key)
 - [**Quickstart**](https://github.com/EvanZhouDev/gemini-ai?tab=readme-ov-file#quickstart)
+- [**Special Features**](https://github.com/EvanZhouDev/gemini-ai?tab=readme-ov-file#special-features)
 - [**Documentation**](https://github.com/EvanZhouDev/gemini-ai?tab=readme-ov-file#documentation)
   - [Initialization](https://github.com/EvanZhouDev/gemini-ai?tab=readme-ov-file#inititalization)
   - [Method Patterns](https://github.com/EvanZhouDev/gemini-ai?tab=readme-ov-file#method-patterns)

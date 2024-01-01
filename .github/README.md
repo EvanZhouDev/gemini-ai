@@ -19,11 +19,16 @@
   <a href="#documentation">Docs</a> | <a href="https://github.com/evanzhoudev/gemini-ai">GitHub</a> | <a href="#faq">FAQ</a>
 </p>
 
+> [!NOTE]  
+> With the release of Gemini AI 1.1, there is now **streaming support**! Check it out [here](#streaming).
+
+
 ## Features
 
-- 🌎 [**Multimodal**](#feature-highlight-auto-model-selection): Interact with text, images, and more.
+- 🌎 [**Multimodal**](#auto-model-selection): Interact with text and images—Native to the model.
 - 🌐 [**Contextual Conversations**](#geminicreatechat): Chat with Gemini, built in.
 - 🧪 [**Parameter**](#method-patterns): Easily modify `temperature`, `topP`, and more
+- ⛓️ [**Streaming**](#streaming): Get AI output the second it's available.
 
 ## Highlights
 
@@ -33,20 +38,20 @@ Gemini AI v1.0 compared to Google's [own API](https://www.npmjs.com/package/@goo
 - 🚀 [**Easy**](#feature-highlight-auto-model-selection): Auto model selection based on context
 - 🎯 [**Concise**](#why-gemini-ai): _**4x**_ less code needed
 
-
 ## Table of Contents
 
-* [**Getting an API Key**](#getting-an-api-key)
-* [**Quickstart**](#quickstart)
-* [**Documentation**](#documentation)
-	* [Initialization](#inititalization)
-	* [Method Patterns](#method-patterns)
-	* [`Gemini.ask()` Method](#geminiask)
-	* [`Gemini.count()` Method](#geminicount)
-	* [`Gemini.embed()` Method](#geminiembed)
-	* [`Gemini.createChat()` Method](#geminicreatechat)
-* [**FAQ**](#faq)
-* [**Contributors**](#contributors)
+- [**Getting an API Key**](#getting-an-api-key)
+- [**Quickstart**](#quickstart)
+- [**Special Features**](#special-features)
+- [**Documentation**](#documentation)
+  - [Initialization](#inititalization)
+  - [Method Patterns](#method-patterns)
+  - [`Gemini.ask()` Method](#geminiask)
+  - [`Gemini.count()` Method](#geminicount)
+  - [`Gemini.embed()` Method](#geminiembed)
+  - [`Gemini.createChat()` Method](#geminicreatechat)
+- [**FAQ**](#faq)
+- [**Contributors**](#contributors)
 
 ## Getting an API Key
 
@@ -67,6 +72,18 @@ import Gemini from "gemini-ai";
 const gemini = new Gemini(API_KEY);
 
 console.log(await gemini.ask("Hi!"));
+```
+
+Make a streaming text request (`gemini-pro`):
+
+```javascript
+import Gemini from "gemini-ai";
+
+const gemini = new Gemini(API_KEY);
+
+gemini.ask("Hi!", {
+	stream: console.log,
+});
 ```
 
 Chat with Gemini (`gemini-pro`):
@@ -136,9 +153,32 @@ gemini.embed("Hi!");
 
 </details>
 
-#### Feature Highlight: Auto Model Selection
+## Special Features
 
-Google has released two models this time for Gemini—`gemini-pro`, and `gemini-pro-vision`. The former is text-specific, while the latter is for multimodal use. Gemini AI has been designed so that you do not have to worry about which model you are using—If you pass in images, it will directly
+### Auto Model Selection
+
+Google has released two models this time for Gemini—`gemini-pro`, and `gemini-pro-vision`. The former is text-specific, while the latter is for multimodal use. Gemini AI has been designed so that it will automatically select which model it will use!
+
+### Streaming
+
+Here's a quick demo:
+
+```javascript
+import Gemini from "gemini-ai";
+
+const gemini = new Gemini(API_KEY);
+
+gemini.ask("Write an essay", {
+	stream: (x) => process.stdout.write(x),
+});
+```
+
+Let's walk through what this code is doing. Like always, we first initialize `Gemini`. Then, we call the `ask` function, and provide a `stream` config. This callback will be invoked whenever there is new content coming in from Gemini!
+
+Note that this automatically cuts to the `streamContentGenerate` command... you don't have to worry about that!
+
+> [!NOTE]  
+> Realize that you don't need to call `ask` async if you're handling stream management on your own. If you want to tap the final answer, it still is returned by the method, and you call it async as normal.
 
 ## Documentation
 
@@ -193,6 +233,7 @@ Config available:
 | `data` | Max tokens to output | `800` |
 | `messages` | Array of `[userInput, modelOutput]` pairs to show how the bot is supposed to behave | `[]` |
 | `data` | An array of `Buffer`s to input to the model. Automatically toggles model to `gemini-pro-vision` | `[]` |
+| `stream` | A function that is called with every new chunk of JSON or Text (depending on the format) that the model receives. [Learn more](#feature-highlight-streaming)| `undefined` |
 
 Example Usage:
 
@@ -250,7 +291,7 @@ console.log(await gemini.embed("Hello!"));
 
 ### `Gemini.createChat()`
 
-`Gemini.createChat()` is a unique method. For one, it isn't asynchronously called. Additionally, it returns a brand new `Chat` object. The `Chat` object only has one method, which is `Chat.ask()`, which has the _exact same syntax_ as the `Gemini.ask()` method, documented [above](#geminiask). The only small difference is that most parameters are passed into the `Chat` through `createChat()`, and cannot be overriden by the `ask()` method. The only parameters that can be overriden is `format` and `data` (**Which is as of 12/13/2023 not supported yet**).
+`Gemini.createChat()` is a unique method. For one, it isn't asynchronously called. Additionally, it returns a brand new `Chat` object. The `Chat` object only has one method, which is `Chat.ask()`, which has the _exact same syntax_ as the `Gemini.ask()` method, documented [above](#geminiask). The only small difference is that most parameters are passed into the `Chat` through `createChat()`, and cannot be overriden by the `ask()` method. The only parameters that can be overridden is `format`, `stream`, and `data` (**As of 12/13/2023, `data` is not supported yet**).
 
 > [!IMPORTANT]  
 > Google has not yet allowed the use of the `gemini-pro-vision` model in continued chats yet—The feature is already implemented, to a certain degree, but cannot be used due to Google's API limitations.

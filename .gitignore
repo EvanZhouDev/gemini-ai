@@ -3,3 +3,4 @@
 /coverage
 /build
 /.idea
+/package-lock.json

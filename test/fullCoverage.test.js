@@ -228,3 +228,12 @@ test("Gemini.createChat() with JSON", async () => {
 		}),
 	).toBe(generateContentResponse);
 });
+
+test("Gemini Create with correct version", async () => {
+	const fetchSpy = vi.spyOn(global, 'fetch')
+	fetch.mockReturnValueOnce(createFetchResponse(generateContentResponse));
+
+	const gemini = new Gemini(API_KEY, { apiVersion: "v1" });
+	expect(await gemini.ask("Hello!")).toBe("Hi!");
+	expect(fetchSpy).toHaveBeenCalledWith('https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=demo-key', expect.any(Object));
+})

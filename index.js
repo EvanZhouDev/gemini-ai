@@ -47,6 +47,7 @@ const answerPairToParameter = (message) => {
 export default class Gemini {
 	#fetch;
 	#dispatcher;
+	#apiVersion;
 
 	static JSON = "json";
 	static TEXT = "markdown";
@@ -61,6 +62,7 @@ export default class Gemini {
 		const config = this.#parseConfig(rawConfig, {
 			fetch: defaultFetch,
 			dispatcher: undefined,
+			apiVersion: 'v1beta'
 		});
 
 		if (!config.fetch)
@@ -71,6 +73,7 @@ export default class Gemini {
 		this.#fetch = config.fetch;
 		this.key = key;
 		this.#dispatcher = config.dispatcher;
+		this.#apiVersion = config.apiVersion;
 	}
 
 	#parseConfig(raw = {}, defaults = {}) {
@@ -110,7 +113,7 @@ export default class Gemini {
 		};
 
 		const response = await this.#fetch(
-			`https://generativelanguage.googleapis.com/v1beta/models/${model}:${command}?key=${this.key}`,
+			`https://generativelanguage.googleapis.com/${this.#apiVersion}/models/${model}:${command}?key=${this.key}`,
 			opts,
 		);
 

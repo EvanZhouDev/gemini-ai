@@ -423,3 +423,17 @@ const gemini = new Gemini(API_KEY, {
 
 <h2 align="center" id="contributors">Contributors</h2>
 <p align="center">A special shoutout to developers of and contributors to the <a href="https://github.com/EvanZhouDev/bard-ai"><code>bard-ai</code></a> and <a href="https://github.com/EvanZhouDev/palm-api"><code>palm-api</code></a> libraries. Gemini AI's interface is heavily based on what we have developed on these two projects.</p>
+
+### I Want more control over the API version
+
+By default the project uses the `v1beta` API version to enable the most features and backwards compatibility. You can read more about it [here](https://ai.google.dev/docs/api_versions).
+
+If you feel the need to use a different version than the default you can pass it as an option on gemini initialization:
+
+```javascript
+import Gemini from "gemini-ai";
+
+const gemini = new Gemini(API_KEY, {
+	apiVersion: "v1",
+});
+```

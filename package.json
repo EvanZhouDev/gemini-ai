@@ -34,16 +34,19 @@
     "gemini"
   ],
   "type": "module",
+  "dependencies": {
+    "undici": "^6.4.0"
+  },
   "devDependencies": {
     "@biomejs/biome": "1.4.1",
-    "@types/node": "^20.10.6",
-    "@vitest/coverage-v8": "^1.1.1",
-    "concurrently": "^8.2.0",
+    "@types/node": "^20.11.5",
+    "@vitest/coverage-v8": "^1.2.1",
+    "concurrently": "^8.2.2",
     "copyfiles": "^2.4.1",
-    "prettier": "^3.1.1",
+    "prettier": "^3.2.4",
     "rimraf": "^5.0.5",
     "typescript": "^5.3.3",
-    "vite": "^5.0.10",
-    "vitest": "^1.1.1"
+    "vite": "^5.0.12",
+    "vitest": "^1.2.1"
   }
 }

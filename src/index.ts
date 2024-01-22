@@ -1,6 +1,6 @@
 import { _fetch, answerPairToParameter, errors, fileTypeFromBuffer } from './utils.js';
 import type { Candidate, Command, Format, Message, Model, PromptFeedback } from './types.js';
-import type { Dispatcher } from 'undici-types';
+import type { Dispatcher } from 'undici';
 
 export class Chat {
   gemini: Gemini;
@@ -97,6 +97,7 @@ export namespace Chat {
   export interface AskOptions<F extends Format> {
     format: F;
     data: ArrayBuffer[];
+
     stream?(stream: Gemini.AskResponse<F>): void;
   }
 }

@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 import { resolve } from 'path';
 
 export default defineConfig({
@@ -12,5 +12,8 @@ export default defineConfig({
       entry: resolve(__dirname, 'src/index.ts'),
       fileName: 'index',
     },
+  },
+  test: {
+    exclude: ['*/~/**'],
   },
 });

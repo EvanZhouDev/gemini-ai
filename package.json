@@ -1,6 +1,6 @@
 {
   "name": "gemini-ai",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "author": "EvanZhouDev",
   "main": "index.js",
   "description": "The easiest way to use the powerful Google Gemini model.",
@@ -10,10 +10,23 @@
     "url": "https://github.com/EvanZhouDev/gemini-ai.git"
   },
   "homepage": "https://github.com/EvanZhouDev/gemini-ai",
+  "exports": {
+    ".": {
+      "import": {
+        "default": "./build/index.js",
+        "types": "./build/index.d.ts"
+      },
+      "require": "./build/index.cjs"
+    }
+  },
   "scripts": {
     "test": "vitest",
     "coverage": "vitest --coverage",
-	"check": "bunx @biomejs/biome check --apply ."
+    "build": "concurrently 'pnpm:build:clear' -c red.bold && concurrently 'pnpm:build:types' 'pnpm:build:lib'",
+    "build:clear": "rimraf ./build",
+    "build:types": "tsc --project tsconfig.library.json",
+    "build:lib": "vite build",
+    "check": "bunx @biomejs/biome check --apply ."
   },
   "keywords": [
     "google",
@@ -21,9 +34,19 @@
     "gemini"
   ],
   "type": "module",
+  "dependencies": {
+    "undici": "^6.4.0"
+  },
   "devDependencies": {
     "@biomejs/biome": "1.4.1",
-    "@vitest/coverage-v8": "^1.0.4",
-    "vitest": "^1.0.4"
+    "@types/node": "^20.11.5",
+    "@vitest/coverage-v8": "^1.2.1",
+    "concurrently": "^8.2.2",
+    "copyfiles": "^2.4.1",
+    "prettier": "^3.2.4",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.12",
+    "vitest": "^1.2.1"
   }
 }

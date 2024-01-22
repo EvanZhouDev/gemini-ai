@@ -1,3 +1,7 @@
 /node_modules
 .DS_Store
 /coverage
+/build
+/.idea
+/package-lock.json
+/pnpm-lock.yaml

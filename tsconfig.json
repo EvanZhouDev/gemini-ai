@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "module": "NodeNext",
+    "target": "ES6",
+    "allowJs": true,
+    "moduleResolution": "NodeNext",
+    "importHelpers": false,
+    "strictNullChecks": true,
+    "lib": [
+      "DOM",
+      "ESNext"
+    ]
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules",
+    "build",
+    "**/*.test.ts",
+    "**/*.bench.ts",
+    "**/*.test.tsx",
+    "**/*.bench.tsx"
+  ]
+}
